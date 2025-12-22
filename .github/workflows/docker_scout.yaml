@@ -6,31 +6,34 @@ on:
 jobs:
   docker-scout:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+      security-events: write
 
     steps:
-      # Checkout repo
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       # Build Docker image
       - name: Build Docker image
         run: |
           docker build -t pygoat:latest .
 
-      - name: Docker Scout Scan
-        uses: docker/scout-action@v1.18.2
+      # Docker Scout Quickview
+      - name: Docker Scout Quickview
+        uses: docker/scout-action@v1
         with:
-          dockerhub-user: ${{ secrets.REPO_USER }}
-          dockerhub-password: ${{ secrets.REPO_PWD }}
-          command: quickview,cves
-          only-severities: critical,high
-          sarif-file: scout-report.sarif
-          image: py-goat:latest
-          local: true
+          command: quickview
+          image: my-image:latest
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        if: always()
+      # Docker Scout CVE scan
+      - name: Docker Scout CVE Scan
+        uses: docker/scout-action@v1
         with:
-          name: docker-scout-findings
-          path: scout-report.sarif
+          command: cves
+          image: my-image:latest
+          severity: critical,high
