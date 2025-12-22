@@ -17,6 +17,11 @@ jobs:
         run: |
           docker build -t pygoat:latest .
 
+      - name: Install Docker Scout
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-scout-plugin
+
       # Run Docker Scout vulnerability scan
       - name: Docker Scout scan
         env:
