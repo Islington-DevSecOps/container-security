@@ -23,6 +23,13 @@ jobs:
         run: |
           docker build -t pygoat:latest .
 
+      - name: Docker Login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.REPO_USER }}
+          password: ${{ secrets.REPO_PWD }}
+
+
       # Docker Scout Quickview
       - name: Docker Scout Quickview
         uses: docker/scout-action@v1
