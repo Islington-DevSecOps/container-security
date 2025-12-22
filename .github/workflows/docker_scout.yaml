@@ -36,6 +36,7 @@ jobs:
         with:
           command: quickview
           image: my-image:latest
+          local: true
 
       # Docker Scout CVE scan
       - name: Docker Scout CVE Scan
@@ -44,3 +45,4 @@ jobs:
           command: cves
           image: my-image:latest
           severity: critical,high
+          local: true
