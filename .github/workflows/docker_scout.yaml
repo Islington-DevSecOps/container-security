@@ -17,22 +17,18 @@ jobs:
         run: |
           docker build -t pygoat:latest .
 
-      - name: Install Docker Scout
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-scout-plugin
-
-      # Run Docker Scout vulnerability scan
-      - name: Docker Scout scan
-        env:
-          DOCKER_SCOUT_ENABLED: "true"
-        run: |
-          docker scout quickview pygoat:latest > scout-report-quickview.txt
-          docker scout cves pygoat:latest > scout-report-cves.txt
-
-      # Optional: Upload Scout report as artifact
-      - name: Upload Scout report
-        uses: actions/upload-artifact@v4
+      - name: Docker Scout Scan
+        uses: docker/scout-action@v1.0.9
         with:
-          name: docker-scout-report
-          path: scout-report-cves.txt,scout-report-quickview.txt
+          dockerhub-user: ${{ secrets.REPO_USER }}
+          dockerhub-password: ${{ secrets.REPO_PWD }}
+          command: quickview,cves
+          only-severities: critical,high
+          sarif-file: scout-report.sarif
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: docker-scout-findings
+          path: scout-report.sarif
