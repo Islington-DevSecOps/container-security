@@ -15,9 +15,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       # Build Docker image
       - name: Build Docker image
         run: |
@@ -29,14 +26,12 @@ jobs:
           username: ${{ secrets.REPO_USER }}
           password: ${{ secrets.REPO_PWD }}
 
-
       # Docker Scout Quickview
       - name: Docker Scout Quickview
         uses: docker/scout-action@v1
         with:
           command: quickview
           image: pygoat:latest
-          local: true
 
       # Docker Scout CVE scan
       - name: Docker Scout CVE Scan
@@ -44,5 +39,3 @@ jobs:
         with:
           command: cves
           image: pygoat:latest
-          severity: critical,high
-          local: true
