@@ -1,35 +1,33 @@
-name: Scan with Docker Scout
+name: Docker Scout Scan
 
 on:
   workflow_dispatch:
 
 jobs:
- docker_scout_scan:
-   name: Run Docker Scout
-   runs-on: ubuntu-latest
+  docker-scout:
+    runs-on: ubuntu-latest
 
-   steps:
-   - name: Checkout code
-     uses: actions/checkout@v4
+    steps:
+      # Checkout repo
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-   - name: Build Docker Image
-     env:
-      DOCKER_SCOUT_ENABLED: "false"
-      DOCKER_CLI_EXPERIMENTAL: "disabled"
-     run: docker build -t myapp:latest .
-    
-   - name: Docker Scout Scan
-     uses: docker/scout-action@v1.0.9
-     with:
-       dockerhub-user: ${{ secrets.REPO_USER }}
-       dockerhub-password: ${{ secrets.REPO_PWD }}
-       command: quickview,cves
-       only-severities: critical,high
-       sarif-file: scout-report.sarif
+      # Build Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t pygoat:latest .
 
-   - name: Upload Artifact
-     uses: actions/upload-artifact@v4
-     if: always()
-     with:
-       name: docker-scout-findings
-       path: scout-report.sarif
+      # Run Docker Scout vulnerability scan
+      - name: Docker Scout scan
+        env:
+          DOCKER_SCOUT_ENABLED: "true"
+        run: |
+          docker scout quickview pygoat:latest --json > scout-report-quickview.json
+          docker scout cves pygoat:latest --json > scout-report-cves.json
+
+      # Optional: Upload Scout report as artifact
+      - name: Upload Scout report
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-scout-report
+          path: scout-report-cves.json,scout-report-quickview.json
