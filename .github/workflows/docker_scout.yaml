@@ -35,7 +35,7 @@ jobs:
         uses: docker/scout-action@v1
         with:
           command: quickview
-          image: my-image:latest
+          image: pygoat:latest
           local: true
 
       # Docker Scout CVE scan
@@ -43,6 +43,6 @@ jobs:
         uses: docker/scout-action@v1
         with:
           command: cves
-          image: my-image:latest
+          image: pygoat:latest
           severity: critical,high
           local: true
