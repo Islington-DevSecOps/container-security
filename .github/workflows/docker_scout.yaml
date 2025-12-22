@@ -22,12 +22,12 @@ jobs:
         env:
           DOCKER_SCOUT_ENABLED: "true"
         run: |
-          docker scout quickview pygoat:latest --json > scout-report-quickview.json
-          docker scout cves pygoat:latest --json > scout-report-cves.json
+          docker scout quickview pygoat:latest > scout-report-quickview.txt
+          docker scout cves pygoat:latest > scout-report-cves.txt
 
       # Optional: Upload Scout report as artifact
       - name: Upload Scout report
         uses: actions/upload-artifact@v4
         with:
           name: docker-scout-report
-          path: scout-report-cves.json,scout-report-quickview.json
+          path: scout-report-cves.txt,scout-report-quickview.txt
