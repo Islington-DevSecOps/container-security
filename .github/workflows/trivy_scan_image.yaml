@@ -1,4 +1,4 @@
-name: Trivy IaC Scan (CloudFormation)
+name: Trivy Container Image Scan (Docker)
 
 on:
   workflow_dispatch:
@@ -34,10 +34,9 @@ jobs:
       - name: Run Trivy Container Image scan
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          scan-type: "image"
-          scan-ref: "pygoat:latest"
+          image-ref: pygoat:latest
           severity: ${{ inputs.severity }}
-          # format: "github"
+          format: "github"
           # output: "trivy-scan.sarif"
           exit-code: "0"
         # env:
