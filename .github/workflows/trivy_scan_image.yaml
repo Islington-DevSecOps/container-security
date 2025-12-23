@@ -29,6 +29,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t pygoat:latest .
+          docker images
 
       - name: Run Trivy Container Image scan
         uses: aquasecurity/trivy-action@0.20.0
